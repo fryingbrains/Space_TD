@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour
 
     void Update()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame && !GameManager.inWave)
+        if (Mouse.current.leftButton.wasPressedThisFrame && !gameManager.inWave)
         {
             if (EventSystem.current.IsPointerOverGameObject()) return; // ignore clicks on UI
             {
@@ -124,7 +124,7 @@ public class MapGenerator : MonoBehaviour
         while (true)
         {
             Vector3 worldPos = tilemap.CellToWorld(current);
-            worldPos += new Vector3(0.6f, 0.5f, 0f); // center of the tile
+            worldPos += new Vector3(0.55f, 0.5f, 0f); // center of the tile
             gameManager.waypoints.Add(worldPos);
             visited.Add(current);
 

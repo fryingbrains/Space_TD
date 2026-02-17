@@ -4,6 +4,9 @@ using UnityEngine;
 public class Creep : MonoBehaviour
 {
     public List<Vector3> waypoints = new();
+    public GameManager gameManager;
+
+
     private int waypointIndex = 1;
     private int _health;
     private int _speed;
@@ -19,18 +22,31 @@ public class Creep : MonoBehaviour
     }
     void Start()
     {
+        gameManager = Camera.main.GetComponent<GameManager>();
         Debug.Log("Creep spawned");
         SetCreep();
     }
+    public void TakeDamage(int damage)
+    {
+        Health -= damage;
+    }
     public void SetCreep()
     {
-        Health = GameManager.currentWave * 4;
+        Health = gameManager.currentWave + 4;
         Speed = 1;
     }
     public void Update()
     {
         if (Health <= 0)
+        {
             Destroy(gameObject);
+            gameManager.creepsAlive--;
+            gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
+            if (gameManager.creepsAlive <= 0)
+            {
+                gameManager.EndWave();
+            }
+        }
         //Debug.Log($"Current position: {transform.position}\nCurrent waypoint: {waypoints[waypointIndex]}");
         transform.position = Vector3.MoveTowards(transform.position, waypoints[waypointIndex], Time.deltaTime * Speed);
         if (Vector3.Distance(transform.position, waypoints[waypointIndex]) < 0.1f)
@@ -38,7 +54,10 @@ public class Creep : MonoBehaviour
             waypointIndex++;
             if (waypointIndex > waypoints.Count - 1)
             {
-                GameManager.GameHealth--;
+                gameManager.GameHealth--;
+                gameManager.livesText.text = "Lives Left: " + gameManager.GameHealth.ToString();
+                gameManager.creepsAlive--;
+                gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
                 Destroy(gameObject);
             }
         }
