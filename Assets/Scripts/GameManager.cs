@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI waveText;
     public TextMeshProUGUI livesText;
     public TextMeshProUGUI creepsText;
+    public TextMeshProUGUI goldText;
+    public TextMeshProUGUI buildButtonText;
+    public int playerGold = 35;
     public int GameHealth = 10;
     public int currentWave = 0;
     public int creepsAlive = 0;
@@ -26,6 +29,8 @@ public class GameManager : MonoBehaviour
     {
         startButton.onClick.AddListener(StartWave);
         livesText.text = "Lives Left: " + 10;
+        playerGold = 35;
+        goldText.text = "Gold: " + playerGold;
     }
 
     public void StartWave()
@@ -39,8 +44,8 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator CreepSpawner()
     {
-        creepsText.text = "Creeps Left: " + (currentWave + 10).ToString();
-        for (int i = 0; i < (currentWave + 10); i++)
+        creepsText.text = "Creeps Left: " + (currentWave + 16).ToString();
+        for (int i = 0; i < (currentWave + 16); i++)
         {
             creepsAlive++;
             GameObject go = Instantiate(creepPrefab, new Vector3(1.5f, 11, 0), Quaternion.identity);

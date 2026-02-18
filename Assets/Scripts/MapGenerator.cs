@@ -20,6 +20,9 @@ public class MapGenerator : MonoBehaviour
     private string[] map =
     {
         "BBBBBBPBBB",
+        "BBBBPPPBBB",
+        "BBBBPBBBBB",
+        "BBBBPPPBBB",
         "BBBBBBPBBB",
         "BBBBBBPBBB",
         "BBBBBBPBBB",
@@ -45,9 +48,33 @@ public class MapGenerator : MonoBehaviour
         GenerateMap();
     }
 
-
     void Update()
     {
+        bool clickDetected = false;
+        Vector2 inputPos = Vector2.zero;
+
+        // Mouse input (for editor)
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            clickDetected = true;
+            inputPos = Mouse.current.position.ReadValue();
+        }
+        // Touch input (for mobile)
+        else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+        {
+            clickDetected = true;
+            inputPos = Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+
+        if (clickDetected && !gameManager.inWave)
+        {
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(inputPos);
+            Vector3Int cellPos = tilemap.WorldToCell(worldPos);
+            SelectTile(cellPos);
+        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame && !gameManager.inWave)
         {
             if (EventSystem.current.IsPointerOverGameObject()) return; // ignore clicks on UI
@@ -66,7 +93,15 @@ public class MapGenerator : MonoBehaviour
         buildButton.interactable = false;
         if (!tileOccupied.ContainsKey(cellPos)) { buildButton.interactable = false; return; }
         if (tileOccupied[cellPos]) { buildButton.interactable = false; return; }
-        buildButton.interactable = true;
+        if (gameManager.playerGold >= 25)
+        {
+            buildButton.interactable = true;
+            gameManager.buildButtonText.text = "BUILD";
+        }
+        else
+        {
+            gameManager.buildButtonText.text = "NO MONEY?!";
+        }
         if (selectedCell.HasValue)
             tilemap.SetColor(selectedCell.Value, Color.white);
 
@@ -88,7 +123,7 @@ public class MapGenerator : MonoBehaviour
             for (int x = 0; x < map[y].Length; x++)
             {
                 char tileChar = map[y][x];
-                Vector3Int position = new(x - 5, -(y - 8), 0);
+                Vector3Int position = new(x - 5, -(y - 10), 0);
 
                 switch (tileChar)
                 {
@@ -170,5 +205,7 @@ public class MapGenerator : MonoBehaviour
         tilemap.SetColor(selectedCell.Value, Color.white);
         selectedCell = null;
         buildButton.interactable = false;
+        gameManager.playerGold -= 25;
+        gameManager.goldText.text = "Gold: " + gameManager.playerGold.ToString();
     }
 }

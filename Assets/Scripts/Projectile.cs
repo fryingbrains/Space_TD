@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, angle);
 
         // Check if we hit the target
-        if (Vector3.Distance(transform.position, target.transform.position) < 0.1f)
+        if (Vector3.Distance(transform.position, target.transform.position) < 0.25f)
         {
             HitTarget();
         }

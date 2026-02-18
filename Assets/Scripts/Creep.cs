@@ -32,7 +32,7 @@ public class Creep : MonoBehaviour
     }
     public void SetCreep()
     {
-        Health = gameManager.currentWave + 4;
+        Health = gameManager.currentWave + 1;
         Speed = 1;
     }
     public void Update()
@@ -40,6 +40,8 @@ public class Creep : MonoBehaviour
         if (Health <= 0)
         {
             Destroy(gameObject);
+            gameManager.playerGold += 1;
+            gameManager.goldText.text = "Gold: " + gameManager.playerGold; //Make a class and embed listeners for all texts
             gameManager.creepsAlive--;
             gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
             if (gameManager.creepsAlive <= 0)
@@ -57,6 +59,10 @@ public class Creep : MonoBehaviour
                 gameManager.GameHealth--;
                 gameManager.livesText.text = "Lives Left: " + gameManager.GameHealth.ToString();
                 gameManager.creepsAlive--;
+                if (gameManager.creepsAlive <= 0)
+                {
+                    gameManager.EndWave();
+                }
                 gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
                 Destroy(gameObject);
             }
