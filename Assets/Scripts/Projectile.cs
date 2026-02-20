@@ -3,13 +3,14 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
-    public int damage = 1;
+    private float damage = 1;
 
     private Creep target;
 
-    public void SetTarget(Creep targetCreep)
+    public void SetProjectile(Creep targetCreep, float _damage)
     {
         target = targetCreep;
+        damage = _damage;
     }
 
     void Update()

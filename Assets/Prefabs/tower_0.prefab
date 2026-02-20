@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3466299462492385894}
   - component: {fileID: 4339856914298106973}
+  - component: {fileID: 3581281886227362958}
   - component: {fileID: 8895461181128066369}
   - component: {fileID: -3715288235200576416}
   m_Layer: 8
@@ -93,6 +94,52 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!61 &3581281886227362958
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4525581920979039183}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 1
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.57, y: 1.27}
+    newSize: {x: 0.57, y: 1.27}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.57, y: 1.27}
+  m_EdgeRadius: 0
 --- !u!58 &8895461181128066369
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -109,7 +156,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 311
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -128,7 +175,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 3.3
+  m_Radius: 3
 --- !u!114 &-3715288235200576416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,5 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower
   projectilePrefab: {fileID: 4458798896584458228, guid: cae7ca4407ac3436691024f2d7d88ed4, type: 3}
-  fireRate: 1
-  range: 3.3
+  rangeUpgradeCost: 5
+  fireRateUpgradeCost: 5
+  damageUpgradeCost: 5
+  ElementalUpgradeCost: 55

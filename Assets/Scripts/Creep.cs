@@ -8,14 +8,14 @@ public class Creep : MonoBehaviour
 
 
     private int waypointIndex = 1;
-    private int _health;
-    private int _speed;
-    public int Health
+    private float _health;
+    private float _speed;
+    public float Health
     {
         get { return _health; }
         set { _health = value; }
     }
-    public int Speed
+    public float Speed
     {
         get { return _speed; }
         set { _speed = value; }
@@ -23,17 +23,16 @@ public class Creep : MonoBehaviour
     void Start()
     {
         gameManager = Camera.main.GetComponent<GameManager>();
-        Debug.Log("Creep spawned");
-        SetCreep();
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         Health -= damage;
     }
-    public void SetCreep()
+    public void SetCreep(int _health, int _speed, List<Vector3> _waypoints)
     {
-        Health = gameManager.currentWave + 1;
-        Speed = 1;
+        Health = _health;
+        waypoints = _waypoints;
+        Speed = _speed;
     }
     public void Update()
     {
@@ -41,9 +40,8 @@ public class Creep : MonoBehaviour
         {
             Destroy(gameObject);
             gameManager.playerGold += 1;
-            gameManager.goldText.text = "Gold: " + gameManager.playerGold; //Make a class and embed listeners for all texts
             gameManager.creepsAlive--;
-            gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
+            gameManager.UpdateUI();
             if (gameManager.creepsAlive <= 0)
             {
                 gameManager.EndWave();
@@ -56,14 +54,18 @@ public class Creep : MonoBehaviour
             waypointIndex++;
             if (waypointIndex > waypoints.Count - 1)
             {
-                gameManager.GameHealth--;
-                gameManager.livesText.text = "Lives Left: " + gameManager.GameHealth.ToString();
+                gameManager.livesLeft--;
+
                 gameManager.creepsAlive--;
                 if (gameManager.creepsAlive <= 0)
                 {
                     gameManager.EndWave();
                 }
-                gameManager.creepsText.text = "Creeps Left: " + gameManager.creepsAlive.ToString();
+                gameManager.UpdateUI();
+                if (gameManager.livesLeft <= 0)
+                {
+                    gameManager.livesText.text = "GAME OVER!";
+                }
                 Destroy(gameObject);
             }
         }

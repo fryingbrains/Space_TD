@@ -1,7 +1,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
+[RequireComponent(typeof(CircleCollider2D))]
 public class Tower : MonoBehaviour
 {
     //private int _damage;
@@ -17,12 +19,52 @@ public class Tower : MonoBehaviour
     //     set { _range = value; }
     // }
     public GameObject projectilePrefab;
-    public float fireRate = 1f;        // shots per second
-    public float range = 3.3f;           // detection range
+    private float fireRate = 1f;        // shots per second
+    private float range = 3f;           // detection range
+    private float currentDamage = 1;
 
     private Creep currentTarget;
     private float nextFireTime;
     private List<Creep> creepsInRange = new List<Creep>();
+    private GameManager gameManager;
+    public int rangeUpgradeCost = 5;
+    public int fireRateUpgradeCost = 5;
+    public int damageUpgradeCost = 5;
+    public int ElementalUpgradeCost = 55;
+
+    private TowerUpgradeUI towerUpgradeUI;
+
+    void Start()
+    {
+        gameManager = Camera.main.GetComponent<GameManager>();
+        towerUpgradeUI = FindObjectOfType<TowerUpgradeUI>();
+    }
+
+    public void OnTowerClicked()
+    {
+        towerUpgradeUI.ShowUpgradeMenu(this);
+    }
+
+    public void UpgradeRange()
+    {
+        gameManager.playerGold -= rangeUpgradeCost;
+        rangeUpgradeCost += 5;
+        range += range / 4;
+        GetComponent<CircleCollider2D>().radius = range;
+    }
+    public void UpgradeFireRate()
+    {
+        gameManager.playerGold -= fireRateUpgradeCost;
+        fireRateUpgradeCost += 5;
+        fireRate += fireRate / 4f;
+    }
+
+    public void UpgradeDamage()
+    {
+        gameManager.playerGold -= damageUpgradeCost;
+        damageUpgradeCost += 5;
+        currentDamage += currentDamage / 4f;
+    }
 
     void Update()
     {
@@ -45,7 +87,7 @@ public class Tower : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Triggered");
+        //Debug.Log("Triggered");
         Creep creep = other.GetComponent<Creep>();
         if (creep != null)
         {
@@ -91,6 +133,6 @@ public class Tower : MonoBehaviour
         // Assuming your projectile has a script that needs the target
         Projectile proj = projectile.GetComponent<Projectile>();
         if (proj != null)
-            proj.SetTarget(currentTarget);
+            proj.SetProjectile(currentTarget, currentDamage);
     }
 }

@@ -17,6 +17,7 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<Vector3Int, bool> tileOccupied = new();
     public Button buildButton;
     public GameObject towerPrefab;
+    private TowerUpgradeUI towerUpgradeUI;
     private string[] map =
     {
         "BBBBBBPBBB",
@@ -44,47 +45,74 @@ public class MapGenerator : MonoBehaviour
 
     void Start()
     {
+        towerUpgradeUI = FindObjectOfType<TowerUpgradeUI>();
         buildButton.onClick.AddListener(PlaceTower);
         GenerateMap();
     }
-
+    public void ClearTileSelection()
+    {
+        if (selectedCell.HasValue)
+        {
+            tilemap.SetColor(selectedCell.Value, Color.white);
+            selectedCell = null;
+        }
+        buildButton.interactable = false;
+    }
     void Update()
     {
         bool clickDetected = false;
         Vector2 inputPos = Vector2.zero;
 
-        // Mouse input (for editor)
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             clickDetected = true;
             inputPos = Mouse.current.position.ReadValue();
         }
-        // Touch input (for mobile)
         else if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
         {
             clickDetected = true;
             inputPos = Touchscreen.current.primaryTouch.position.ReadValue();
         }
 
-        if (clickDetected && !gameManager.inWave)
+        if (clickDetected)
         {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+            Debug.Log("Click detected");
+
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                Debug.Log("Blocked by UI");
+                return;
+            }
+
+            if (towerUpgradeUI.WasButtonClickedThisFrame())
+            {
+                Debug.Log("Blocked by button click");
+                return;
+            }
 
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(inputPos);
+
+            RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero, 0f);
+            Debug.Log($"Raycast hit: {hit.collider?.name ?? "nothing"}");
+
+            if (hit.collider != null && hit.collider is BoxCollider2D)
+            {
+                Debug.Log("Hit box collider");
+                Tower tower = hit.collider.GetComponent<Tower>();
+                if (tower != null)
+                {
+                    Debug.Log("Opening tower menu");
+                    tower.OnTowerClicked();
+                    return;
+                }
+            }
+            else
+            {
+                towerUpgradeUI.CloseMenu();
+            }
+
             Vector3Int cellPos = tilemap.WorldToCell(worldPos);
             SelectTile(cellPos);
-        }
-
-        if (Mouse.current.leftButton.wasPressedThisFrame && !gameManager.inWave)
-        {
-            if (EventSystem.current.IsPointerOverGameObject()) return; // ignore clicks on UI
-            {
-                Debug.Log("Clicked");
-                Vector2 mousePos = Mouse.current.position.ReadValue();
-                Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-                Vector3Int cellPos = tilemap.WorldToCell(worldPos);
-                SelectTile(cellPos);
-            }
         }
     }
 
@@ -206,6 +234,6 @@ public class MapGenerator : MonoBehaviour
         selectedCell = null;
         buildButton.interactable = false;
         gameManager.playerGold -= 25;
-        gameManager.goldText.text = "Gold: " + gameManager.playerGold.ToString();
+        gameManager.UpdateUI();//.goldText.text = "Gold: " + gameManager.playerGold.ToString();
     }
 }
